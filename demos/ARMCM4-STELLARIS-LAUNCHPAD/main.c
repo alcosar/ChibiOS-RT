@@ -29,7 +29,16 @@
 #include "hal.h"
 #include "test.h"
 
-/* uint8_t buf[64]; */
+/*
+ * SPI configuration (1MHz, CPH=0, CPO=0).
+ */
+static SPIConfig spicfg = {
+  NULL,
+  GPIOA,
+  GPIOA_SPI0SEL,
+  CR0_DSS8BIT | CR0_FSPIFF | CR0_CLOCKRATE(2),
+  39
+};
 
 /*
  * LED blinker thread, times are in milliseconds.
@@ -77,6 +86,7 @@ int main(int argc, char **argv) {
    * Activates the serial driver 1 using the driver default configuration.
    */
   sdStart(&SD1, NULL);           /* Default: 38400,8,N,1. */
+  spiStart(&SPID1, &spicfg);
 
   /*
    * Creates the blinker thread.
@@ -88,10 +98,19 @@ int main(int argc, char **argv) {
    * sleeping in a loop and check the button state.
    */
   while (TRUE) {
+    char rx = 0;
+    char tx;
+
     chThdSleepMilliseconds(500);
-    if (palReadPad(GPIOF, GPIOF_SW2))
-      sdWrite(&SD1, (uint8_t *)"Hello World\r\n", 14);
-    else
+    sdWrite(&SD1, (uint8_t *)"Hello World\r\n", 14);
+    if (!palReadPad(GPIOF, GPIOF_SW1)) {
+      tx = sdGet(&SD1);
+      spiSelect(&SPID1);
+      spiExchange(&SPID1, 1, &tx, &rx);
+      spiUnselect(&SPID1);
+      sdPut(&SD1, rx);
+    }
+    if (!palReadPad(GPIOF, GPIOF_SW2))
       TestThread(&SD1);
   }
   return 0;
