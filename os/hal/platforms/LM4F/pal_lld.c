@@ -64,6 +64,15 @@
  * @param[in] config the LM4F ports configuration
  */
 void _pal_lld_init(const PALConfig *config) {
+  SYSCTL->RCGCGPIO |= (1 << 0);
+  /* XXX wait after enabling clock - otherwise BusFault exeption occured */
+  __NOP();
+  __NOP();
+  __NOP();
+  GPIOA->DIR |= config->PA.dir;
+  GPIOA->DEN |= config->PA.den;
+  GPIOA->PUR |= config->PA.pur;
+
   /* enable clock gating control for PORTF */
   SYSCTL->RCGCGPIO |= (1 << 5);
   /* XXX wait after enabling clock - otherwise BusFault exeption occured */
