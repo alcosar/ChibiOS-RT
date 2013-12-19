@@ -59,10 +59,12 @@
 #define GPIOF_LED_BLUE          2
 #define GPIOF_LED_GREEN         3
 
-#define VAL_GPIOADIR            0x00000000
-#define VAL_GPIOADATA           0x00000000
+#define GPIOA_SPI0SEL           3
+
+#define VAL_GPIOADIR            (1 << GPIOA_SPI0SEL)
+#define VAL_GPIOADATA           (1 << GPIOA_SPI0SEL)
 #define VAL_GPIOADEN            0xff
-#define VAL_GPIOAPUR            0x00
+#define VAL_GPIOAPUR            (1 << GPIOA_SPI0SEL)
 
 #define VAL_GPIOBDIR            0x00000000
 #define VAL_GPIOBDATA           0x00000000
