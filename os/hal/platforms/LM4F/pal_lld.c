@@ -70,6 +70,15 @@ void _pal_lld_init(const PALConfig *config) {
   __NOP();
   __NOP();
   __NOP();
+  /*
+   * PF0 can be used as external NMI, and is under commit protection
+   * (as well as PD7). A special sequence is required to change AFSEL,
+   * PUR, PDR, DEN registers.
+   */
+  GPIOF->LOCK = 0x4C4F434B;     /* unlock commit register */
+  GPIOF->CR = 1;                /* enable to change settings */
+  GPIOF->LOCK = 0;              /* any value locks access again */
+
   GPIOF->DIR |= config->PF.dir;
   GPIOF->DEN |= config->PF.den;
   GPIOF->PUR |= config->PF.pur;
