@@ -28,6 +28,9 @@
 #include "ch.h"
 #include "hal.h"
 #include "test.h"
+#include "chprintf.h"
+
+#define uart0 ((BaseSequentialStream *)&SD1)
 
 /*
  * SPI configuration (1MHz, CPH=0, CPO=0).
@@ -102,7 +105,7 @@ int main(int argc, char **argv) {
     char tx;
 
     chThdSleepMilliseconds(500);
-    sdWrite(&SD1, (uint8_t *)"Hello World\r\n", 14);
+    chprintf(uart0, "Hello World\r\n");
     if (!palReadPad(GPIOF, GPIOF_SW1)) {
       tx = sdGet(&SD1);
       spiSelect(&SPID1);
