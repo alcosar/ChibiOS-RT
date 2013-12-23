@@ -172,6 +172,19 @@ typedef GPIOA_Type *ioportid_t;
 #define pal_lld_readport(port) ((port)->DATA)
 
 /**
+ * @brief   Reads a logical state from an I/O pad.
+ *
+ * @param[in] port      port identifier
+ * @param[in] pad       pad number within the port
+ * @return              The logical state.
+ * @retval PAL_LOW      low logical state.
+ * @retval PAL_HIGH     high logical state.
+ *
+ * @notapi
+ */
+#define pal_lld_readpad(port, pad) ((port)->MASKED_ACCESS[1 << pad])
+
+/**
  * @brief   Reads the output latch.
  * @details The purpose of this function is to read back the latched output
  *          value.
